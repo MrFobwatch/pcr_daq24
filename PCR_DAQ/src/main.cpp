@@ -6,6 +6,14 @@ int myFunction(int, int);
 void setup() {
   // put your setup code here, to run once:
   int result = myFunction(2, 3);
+
+  // Define IO Ports
+    //IMU
+    //SD Card
+    //LED TAPE
+
+  // Define Interfaces for Each controller we are polling data from
+
 }
 
 void loop() {
