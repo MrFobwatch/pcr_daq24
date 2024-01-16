@@ -1,18 +1,29 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+// Accelerometer declarations
+const int xpin = A4;
+const int ypin = A5;
+const int zpin = A6;
+
+// LED declarations
+const bool LED = 7;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
-}
-// My comment
-void loop() {
-  // put your main code here, to run repeatedly:
+  // Initialize the serial communications:
+  Serial.begin(9600);
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop() {
+  Serial.print(analogRead(xpin));
+
+  Serial.print("\t");
+  Serial.print(analogRead(ypin));
+
+  Serial.print("\t");
+  Serial.print(analogRead(zpin));
+
+  Serial.print("\t");
+  delay(100);
+}
+
 }
