@@ -19,49 +19,49 @@ int weaponValueOut = 0;
 VescUart UART;
 
 void setup() {
-  // Initialize the serial communications:
-  Serial.begin(9600);
+	// Initialize the serial communications:
+	Serial.begin(9600);
 
-  // set the digital pin as output:
-  pinMode(LED, OUTPUT);
+	// set the digital pin as output:
+	pinMode(LED, OUTPUT);
 
-  //Enable Serial on a port for UART
-  Serial1.begin(115200);
+	//Enable Serial on a port for UART
+	Serial1.begin(115200);
 
 	while (!Serial1) {;}
 
-  // Set the port for the UART communication to the VESC
-  UART.setSerialPort(&Serial1);
+	// Set the port for the UART communication to the VESC
+	UART.setSerialPort(&Serial1);
 }
 
 void loop() {
-  // print the sensor values:
-  Serial.print(analogRead(xpin));
-  // print a tab between values:
-  Serial.print("\t");
-  // print the sensor values:
-  Serial.print(analogRead(ypin));
-  // print a tab between values:
-  Serial.print("\t");
-  // print the sensor values:
-  Serial.print(analogRead(zpin));
-  // print a tabe between values:
-  Serial.print("\t");
+	// print the sensor values:
+	Serial.print(analogRead(xpin));
+	// print a tab between values:
+	Serial.print("\t");
+	// print the sensor values:
+	Serial.print(analogRead(ypin));
+	// print a tab between values:
+	Serial.print("\t");
+	// print the sensor values:
+	Serial.print(analogRead(zpin));
+	// print a tabe between values:
+	Serial.print("\t");
 
-  weaponValueIn = analogRead(weaponCurrent);
-  weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
+	weaponValueIn = analogRead(weaponCurrent);
+	weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
 
-  if(weaponValueOut <= 512){
-    ledState = HIGH;
-  } else {
-    ledState = LOW;
-  }
-  digitalWrite(LED, ledState);
+	if(weaponValueOut <= 512){
+		ledState = HIGH;
+	} else {
+		ledState = LOW;
+	}
+	digitalWrite(LED, ledState);
 
 	// Poll the VESC for data
 	UART.getVescValues();
 
 
-  // delay before next reading:
-  delay(10);
+	// delay before next reading:
+	delay(10);
 }
