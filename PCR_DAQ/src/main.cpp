@@ -37,7 +37,7 @@ void loop() {
   Serial.print("\t");
 
   weaponValueIn = analogRead(weaponCurrent);
-  weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255)
+  weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
 
   if(weaponValueOut <= 512){
     ledState = HIGH;
@@ -48,6 +48,4 @@ void loop() {
 
   // delay before next reading:
   delay(10);
-}
-
 }
