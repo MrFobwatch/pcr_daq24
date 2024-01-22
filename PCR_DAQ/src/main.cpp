@@ -20,7 +20,7 @@ VescUart UART;
 
 void setup() {
 	// Initialize the serial communications:
-	Serial.begin(9600);
+	Serial.begin(115200);
 
 	// set the digital pin as output:
 	pinMode(LED, OUTPUT);
@@ -36,14 +36,17 @@ void setup() {
 
 void loop() {
 	// print the sensor values:
+	Serial.print(">xaxis");
 	Serial.print(analogRead(xpin));
 	// print a tab between values:
-	Serial.print("\t");
+	 Serial.print("\n");
 	// print the sensor values:
+	Serial.print(">yaxis");
 	Serial.print(analogRead(ypin));
 	// print a tab between values:
 	Serial.print("\t");
 	// print the sensor values:
+	Serial.print(">zaxis");
 	Serial.print(analogRead(zpin));
 	// print a tabe between values:
 	Serial.print("\t");
@@ -60,7 +63,6 @@ void loop() {
 
 	// Poll the VESC for data
 	UART.getVescValues();
-
 
 	// delay before next reading:
 	delay(10);
