@@ -10,10 +10,22 @@ const int zpin = A6;
 const int LED = 7;
 int ledState = LOW;
 
-// Weapon Speed based off current
-const int weaponCurrent = A0;
+// Weapon Variables
+// const int weaponCurrent = A0;
 int weaponValueIn = 0;
 int weaponValueOut = 0;
+
+long weaponRPM = 0;
+float weaponCurrent = 0;
+float weaponInputCurrent = 0;
+
+// Drivetrain Variables
+
+long leftDriveRPM;
+float leftDriveCurrent, leftDriveInputCurrent;
+
+long rightDriveRPM;
+float rightDriveCurrent, rightDriveInputCurrent;
 
 // VescUart Class
 VescUart UART;
@@ -61,8 +73,24 @@ void loop() {
 	}
 	digitalWrite(LED, ledState);
 
-	// Poll the VESC for data
+	// Poll the directly attached VESC for data
 	UART.getVescValues();
+
+	weaponRPM = UART.data.tachometer;
+	weaponCurrent = UART.data.avgMotorCurrent;
+	weaponInputCurrent = UART.data.avgInputCurrent;
+
+	// Poll the drive VESC for data (CAN ID of Drive VESC)
+	UART.getVescValues(2); 
+	leftDriveRPM = UART.data.tachometer;
+	leftDriveCurrent = UART.data.avgMotorCurrent;
+	leftDriveInputCurrent = UART.data.avgInputCurrent;
+
+	// Poll the other drive VESC
+	UART.getVescValues(3); 
+	rightDriveRPM = UART.data.tachometer;
+	rightDriveCurrent = UART.data.avgMotorCurrent;
+	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
 	// delay before next reading:
 	delay(10);
