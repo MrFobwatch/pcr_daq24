@@ -92,6 +92,14 @@ void loop() {
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
+	//Test UART connection
+
+	Serial.print(">VESCTemp:");
+	Serial.println(UART.data.tempMosfet);
+
+	Serial.print(">VESCinpVolt:");
+	Serial.println(UART.data.inpVoltage);
+
 	// delay before next reading:
 	delay(10);
 }
