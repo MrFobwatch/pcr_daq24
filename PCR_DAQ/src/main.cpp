@@ -94,6 +94,10 @@ void loop() {
 
 	//Test UART connection
 
+	bool vescdata = UART.getVescValues();
+	Serial.print(">Bool:");
+	Serial.println(vescdata);
+
 	Serial.print(">VESCTemp:");
 	Serial.println(UART.data.tempMosfet);
 
