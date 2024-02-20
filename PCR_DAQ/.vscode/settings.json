@@ -1,6 +1,10 @@
 {
     "cmake.configureOnOpen": true,
+<<<<<<< Updated upstream
     "files.associations": {
         "random": "cpp"
     }
+=======
+    "cmake.sourceDirectory": "C:/My_Programs/Github_Programs/pcr_daq24/PCR_DAQ/.pio/libdeps/teensy41/FastLED"
+>>>>>>> Stashed changes
 }

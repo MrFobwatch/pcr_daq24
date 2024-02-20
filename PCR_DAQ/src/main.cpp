@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <VescUart.h>
+#include <SD.h>
+#include <SPI.h>
 
 // Accelerometer declarations
 const int xpin = A4;
@@ -30,6 +32,8 @@ float rightDriveCurrent, rightDriveInputCurrent;
 // VescUart Class
 VescUart UART;
 
+const int chipSelect = BUILTIN_SDCARD;
+
 void setup() {
 	// Initialize the serial communications:
 	Serial.begin(115200);
@@ -44,24 +48,43 @@ void setup() {
 
 	// Set the port for the UART communication to the VESC
 	UART.setSerialPort(&Serial1);
+
+	Serial.print("Initializing SD card...");
+
+	// see if the card is present and can be initialized:
+	if (!SD.begin(chipSelect)){
+		Serial.println("Card failed or not present");
+		return;
+	}
+	Serial.println("card initialized.");
 }
 
 void loop() {
+
+	// open the file named datalog.txt on the sd card
+	File dataFile = SD.open("datalog.txt", FILE_WRITE);
+
 	// print the sensor values:
 	Serial.print(">xaxis:");
 	Serial.println(analogRead(xpin));
+	dataFile.println(analogRead(xpin));
 	// print a tab between values:
 	//  Serial.print("\n");
 	// print the sensor values:
 	Serial.print(">yaxis:");
 	Serial.println(analogRead(ypin));
+	dataFile.println(analogRead(ypin));
 	// print a tab between values:
 	// Serial.print("\n");
 	// print the sensor values:
 	Serial.print(">zaxis:");
 	Serial.println(analogRead(zpin));
+	dataFile.println(analogRead(zpin));
 	// print a tabe between values:
 	// Serial.print("\n");
+
+	// Close the data file
+	dataFile.close();
 
 	weaponValueIn = analogRead(weaponCurrent);
 	weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
