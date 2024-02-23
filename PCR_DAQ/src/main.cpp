@@ -76,19 +76,19 @@ void loop() {
 	// Poll the directly attached VESC for data
 	UART.getVescValues();
 
-	weaponRPM = UART.data.tachometer;
+	weaponRPM = UART.data.rpm;
 	weaponCurrent = UART.data.avgMotorCurrent;
 	weaponInputCurrent = UART.data.avgInputCurrent;
 
 	// Poll the drive VESC for data (CAN ID of Drive VESC)
 	UART.getVescValues(2); 
-	leftDriveRPM = UART.data.tachometer;
+	leftDriveRPM = UART.data.rpm;
 	leftDriveCurrent = UART.data.avgMotorCurrent;
 	leftDriveInputCurrent = UART.data.avgInputCurrent;
 
 	// Poll the other drive VESC
 	UART.getVescValues(3); 
-	rightDriveRPM = UART.data.tachometer;
+	rightDriveRPM = UART.data.rpm;
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
