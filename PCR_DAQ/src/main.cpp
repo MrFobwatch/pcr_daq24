@@ -48,18 +48,18 @@ void setup() {
 
 void loop() {
 	// print the sensor values:
-	Serial.print(">xaxis:");
-	Serial.println(analogRead(xpin));
+	// Serial.print(">xaxis:");
+	// Serial.println(analogRead(xpin));
 	// print a tab between values:
 	//  Serial.print("\n");
 	// print the sensor values:
-	Serial.print(">yaxis:");
-	Serial.println(analogRead(ypin));
+	// Serial.print(">yaxis:");
+	// Serial.println(analogRead(ypin));
 	// print a tab between values:
 	// Serial.print("\n");
 	// print the sensor values:
-	Serial.print(">zaxis:");
-	Serial.println(analogRead(zpin));
+	// Serial.print(">zaxis:");
+	// Serial.println(analogRead(zpin));
 	// print a tabe between values:
 	// Serial.print("\n");
 
