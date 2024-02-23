@@ -94,16 +94,27 @@ void loop() {
 
 	//Test UART connection
 
-	bool vescdata = UART.getVescValues();
-	Serial.print(">Bool:");
-	Serial.println(vescdata);
+if ( UART.getVescValues() ) {
 
+    // Serial.println(UART.data.rpm);
+	Serial.print(">VESCinpVolt:");
+	Serial.println(UART.data.inpVoltage);
+    // Serial.println(UART.data.ampHours);
+	// Serial.print(">VESCOOdometer:");
+    // Serial.println(UART.data.tachometer);
+	Serial.print(">VESCRPM:");
+    Serial.println(UART.data.rpm);
+	Serial.print(">VESCcalcRPM:");
+	int calcRPM = (UART.data.rpm) / (14 / 2); //Poles over 2
+	Serial.println(calcRPM);
 	Serial.print(">VESCTemp:");
 	Serial.println(UART.data.tempMosfet);
 
-	Serial.print(">VESCinpVolt:");
-	Serial.println(UART.data.inpVoltage);
-
+  }
+  else
+  {
+    Serial.println("Failed to get data!");
+  }
 	// delay before next reading:
 	delay(10);
 }
