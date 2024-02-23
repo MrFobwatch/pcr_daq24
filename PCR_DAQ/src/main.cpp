@@ -2,13 +2,16 @@
 #include <VescUart.h>
 
 // Accelerometer declarations
-const int xpin = A4;
-const int ypin = A5;
-const int zpin = A6;
+#define xpin = A4;
+#define ypin = A5;
+#define zpin = A6;
 
 // LED declarations
 const int LED = 7;
 int ledState = LOW;
+
+// Motor/ESC Declarations
+const int poles = 14;
 
 // Weapon Variables
 // const int weaponCurrent = A0;
@@ -105,7 +108,7 @@ if ( UART.getVescValues() ) {
 	Serial.print(">VESCRPM:");
     Serial.println(UART.data.rpm);
 	Serial.print(">VESCcalcRPM:");
-	int calcRPM = (UART.data.rpm) / (14 / 2); //Poles over 2
+	int calcRPM = (UART.data.rpm) / (poles / 2);
 	Serial.println(calcRPM);
 	Serial.print(">VESCTemp:");
 	Serial.println(UART.data.tempMosfet);
