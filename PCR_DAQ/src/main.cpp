@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <VescUart.h>
+#include <FastLED.h>
 
 // Accelerometer declarations
 #define xpin = A4;
@@ -8,6 +9,11 @@
 
 // LED declarations
 const int LED = 7;
+#define DATA_PIN 3
+#define NUM_LEDS 10
+CRGB leds[NUM_LEDS];
+
+
 int ledState = LOW;
 
 // Motor/ESC Declarations
@@ -21,6 +27,7 @@ int weaponValueOut = 0;
 long weaponRPM = 0;
 float weaponCurrent = 0;
 float weaponInputCurrent = 0;
+int calcRPM;
 
 // Drivetrain Variables
 
@@ -39,6 +46,9 @@ void setup() {
 
 	// set the digital pin as output:
 	pinMode(LED, OUTPUT);
+
+	//Enable the led
+	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
 
 	//Enable Serial on a port for UART
 	Serial1.begin(115200);
@@ -95,6 +105,19 @@ void loop() {
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
+	FastLED.setBrightness(50);
+
+if ( calcRPM >= 400) {
+		leds[0] = CRGB::Green;
+		leds[1] = CRGB::Green;
+		leds[2] = CRGB::Green;
+		FastLED.show();
+	} else {
+		leds[0] = CRGB::Red;
+		leds[1] = CRGB::Red;
+		leds[2] = CRGB::Red;
+		FastLED.show();
+	}
 	//Test UART connection
 
 if ( UART.getVescValues() ) {
@@ -108,7 +131,7 @@ if ( UART.getVescValues() ) {
 	Serial.print(">VESCRPM:");
     Serial.println(UART.data.rpm);
 	Serial.print(">VESCcalcRPM:");
-	int calcRPM = (UART.data.rpm) / (poles / 2);
+	calcRPM = (UART.data.rpm) / (poles / 2);
 	Serial.println(calcRPM);
 	Serial.print(">VESCTemp:");
 	Serial.println(UART.data.tempMosfet);
