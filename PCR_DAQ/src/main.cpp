@@ -142,5 +142,23 @@ if ( UART.getVescValues() ) {
     Serial.println("Failed to get data!");
   }
 	// delay before next reading:
-	delay(10);
+	// delay(10);
+
+
+	//LED Testing
+	//    for(int whiteLed = 0; whiteLed < NUM_LEDS; whiteLed = whiteLed + 1) {
+    //   // Turn our current led on to white, then show the leds
+    //   leds[whiteLed] = CRGB::White;
+ 
+    //   // Show the leds (only one of which is set to white, from above)
+    //   FastLED.show();
+ 
+    //   // Wait a little bit
+    //   delay(100);
+ 
+    //   // Turn our current led back to black for the next loop around
+    //   leds[whiteLed] = CRGB::Black;
+
+	
+
 }
