@@ -57,6 +57,7 @@ void setup() {
 
 	// Set the port for the UART communication to the VESC
 	UART.setSerialPort(&Serial1);
+	UART.setDebugPort(&Serial);
 }
 
 void loop() {
@@ -119,7 +120,7 @@ if ( calcRPM >= 400) {
 		FastLED.show();
 	}
 	//Test UART connection
-
+UART.printVescValues();
 if ( UART.getVescValues() ) {
 
     // Serial.println(UART.data.rpm);
