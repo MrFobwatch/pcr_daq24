@@ -3,9 +3,9 @@
 #include <FastLED.h>
 
 // Accelerometer declarations
-#define xpin = A4;
-#define ypin = A5;
-#define zpin = A6;
+// #define xpin = A4;
+// #define ypin = A5;
+// #define zpin = A6;
 
 // LED declarations
 const int LED = 7;
