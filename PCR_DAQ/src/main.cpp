@@ -25,10 +25,10 @@ const int poles = 16;
 int weaponValueIn = 0;
 int weaponValueOut = 0;
 
-long weaponRPM = 0;
+long weaponElecRPM = 0;
 float weaponCurrent = 0;
 float weaponInputCurrent = 0;
-int calcRPM;
+int weaponCalcRPM;
 
 // Drivetrain Variables
 
@@ -66,39 +66,13 @@ void loop() {
 	// open the file named datalog.txt on the sd card
 	File dataFile = SD.open("datalog.txt", FILE_WRITE);
 
-	// print the sensor values:
-	// Serial.print(">xaxis:");
-	// Serial.println(analogRead(xpin));
-	// print a tab between values:
-	//  Serial.print("\n");
-	// print the sensor values:
-	// Serial.print(">yaxis:");
-	// Serial.println(analogRead(ypin));
-	// print a tab between values:
-	// Serial.print("\n");
-	// print the sensor values:
-	// Serial.print(">zaxis:");
-	// Serial.println(analogRead(zpin));
-	// print a tabe between values:
-	// Serial.print("\n");
-
-	// Close the data file
-	dataFile.close();
-
-	weaponValueIn = analogRead(weaponCurrent);
-	weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
-
-	if(weaponValueOut <= 512){
-		ledState = HIGH;
-	} else {
-		ledState = LOW;
-	}
-	digitalWrite(LED_pin, ledState);
-
 	// Poll the directly attached VESC for data
 	UART.getVescValues();
 
-	weaponRPM = UART.data.rpm;
+	weaponElecRPM = UART.data.rpm;
+	weaponCalcRPM = (UART.data.rpm) / (poles / 2);
+	Serial.print(">VESCcalcRPM:");
+	Serial.println(weaponCalcRPM);
 	weaponCurrent = UART.data.avgMotorCurrent;
 	weaponInputCurrent = UART.data.avgInputCurrent;
 
@@ -114,9 +88,10 @@ void loop() {
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
+	// LED Code First Version
 	FastLED.setBrightness(50);
 
-if ( calcRPM >= 400) {
+if ( weaponCalcRPM >= 400) {
 		leds[0] = CRGB::Green;
 		leds[1] = CRGB::Green;
 		leds[2] = CRGB::Green;
@@ -127,33 +102,9 @@ if ( calcRPM >= 400) {
 		leds[2] = CRGB::Red;
 		FastLED.show();
 	}
-	//Test UART connection
 
-if ( UART.getVescValues() ) {
-
-    // Serial.println(UART.data.rpm);
-	Serial.print(">VESCinpVolt:");
-	Serial.println(UART.data.inpVoltage);
-
-	Serial.print(">VESCID:");
-	Serial.println(UART.data.id);
-
-    // Serial.println(UART.data.ampHours);
-	// Serial.print(">VESCOOdometer:");
-    // Serial.println(UART.data.tachometer);
-	// Serial.print(">VESCRPM:");
-    // Serial.println(UART.data.rpm);
-	// Serial.print(">VESCcalcRPM:");
-	// calcRPM = (UART.data.rpm) / (poles / 2);
-	// Serial.println(calcRPM);
-	// Serial.print(">VESCTemp:");
-	// Serial.println(UART.data.tempMosfet);
-
-  }
   if ( UART.getImuData() ) {
 
-    Serial.print(">VESCimuMask:");
-	Serial.println(UART.data.imuMask);
 	Serial.print(">VESCimuRoll:");
 	Serial.println(UART.data.imuRoll*180/ PI);
 	Serial.print(">VESCimuPitch:");
@@ -166,26 +117,13 @@ if ( UART.getVescValues() ) {
 	Serial.println(UART.data.accY);
 	Serial.print(">VESCimuAccZ:");
 	Serial.println(UART.data.accZ);
-	Serial.print(">VESCimuGyroX:");
-	Serial.println(UART.data.gyroX);
-	Serial.print(">VESCimuGyroY:");
-	Serial.println(UART.data.gyroY);
-	Serial.print(">VESCimuGyroZ:");
-	Serial.println(UART.data.gyroZ);
-	Serial.print(">VESCimuMagX:");
-	Serial.println(UART.data.magX);
-	Serial.print(">VESCimuMagY:");
-	Serial.println(UART.data.magY);
-	Serial.print(">VESCimuMagZ:");
-	Serial.println(UART.data.magZ);
-	Serial.print(">VESCimuQ0:");
-	Serial.println(UART.data.q0);
-	Serial.print(">VESCimuQ1:");
-	Serial.println(UART.data.q1);
-	Serial.print(">VESCimuQ2:");
-	Serial.println(UART.data.q2);
-	Serial.print(">VESCimuQ3:");
-	Serial.println(UART.data.q3);
+	// Serial.print(">VESCimuGyroX:");
+	// Serial.println(UART.data.gyroX);
+	// Serial.print(">VESCimuGyroY:");
+	// Serial.println(UART.data.gyroY);
+	// Serial.print(">VESCimuGyroZ:");
+	// Serial.println(UART.data.gyroZ);
+\
   }
   else
   {
@@ -208,7 +146,5 @@ if ( UART.getVescValues() ) {
  
     //   // Turn our current led back to black for the next loop around
     //   leds[whiteLed] = CRGB::Black;
-
-	
 
 }
