@@ -2,7 +2,17 @@
     "cmake.configureOnOpen": true,
 <<<<<<< Updated upstream
     "files.associations": {
-        "random": "cpp"
+        "random": "cpp",
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "functional": "cpp",
+        "limits": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "tuple": "cpp"
     }
 =======
     "cmake.sourceDirectory": "C:/My_Programs/Github_Programs/pcr_daq24/PCR_DAQ/.pio/libdeps/teensy41/FastLED"
