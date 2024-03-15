@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SD.h>
 #include <VescUart.h>
 #include <FastLED.h>
 
@@ -8,7 +9,7 @@
 // #define zpin = A6;
 
 // LED declarations
-const int LED = 7;
+const int LED_pin = 7;
 #define DATA_PIN 3
 #define NUM_LEDS 10
 CRGB leds[NUM_LEDS];
@@ -17,7 +18,7 @@ CRGB leds[NUM_LEDS];
 int ledState = LOW;
 
 // Motor/ESC Declarations
-const int poles = 14;
+const int poles = 16;
 
 // Weapon Variables
 // const int weaponCurrent = A0;
@@ -45,15 +46,13 @@ void setup() {
 	Serial.begin(115200);
 
 	// set the digital pin as output:
-	pinMode(LED, OUTPUT);
+	pinMode(LED_pin, OUTPUT);
 
 	//Enable the led
 	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
 
 	//Enable Serial on a port for UART
 	Serial1.begin(115200);
-
-	while (!Serial1) {;}
 
 	// Set the port for the UART communication to the VESC
 	UART.setSerialPort(&Serial1);
@@ -85,7 +84,7 @@ void loop() {
 	} else {
 		ledState = LOW;
 	}
-	digitalWrite(LED, ledState);
+	digitalWrite(LED_pin, ledState);
 
 	// Poll the directly attached VESC for data
 	UART.getVescValues();
@@ -120,23 +119,64 @@ if ( calcRPM >= 400) {
 		FastLED.show();
 	}
 	//Test UART connection
-UART.printVescValues();
+
 if ( UART.getVescValues() ) {
 
     // Serial.println(UART.data.rpm);
 	Serial.print(">VESCinpVolt:");
 	Serial.println(UART.data.inpVoltage);
+
+	Serial.print(">VESCID:");
+	Serial.println(UART.data.id);
+
     // Serial.println(UART.data.ampHours);
 	// Serial.print(">VESCOOdometer:");
     // Serial.println(UART.data.tachometer);
-	Serial.print(">VESCRPM:");
-    Serial.println(UART.data.rpm);
-	Serial.print(">VESCcalcRPM:");
-	calcRPM = (UART.data.rpm) / (poles / 2);
-	Serial.println(calcRPM);
-	Serial.print(">VESCTemp:");
-	Serial.println(UART.data.tempMosfet);
+	// Serial.print(">VESCRPM:");
+    // Serial.println(UART.data.rpm);
+	// Serial.print(">VESCcalcRPM:");
+	// calcRPM = (UART.data.rpm) / (poles / 2);
+	// Serial.println(calcRPM);
+	// Serial.print(">VESCTemp:");
+	// Serial.println(UART.data.tempMosfet);
 
+  }
+  if ( UART.getImuData() ) {
+
+    Serial.print(">VESCimuMask:");
+	Serial.println(UART.data.imuMask);
+	Serial.print(">VESCimuRoll:");
+	Serial.println(UART.data.imuRoll*180/ PI);
+	Serial.print(">VESCimuPitch:");
+	Serial.println(UART.data.imuPitch*180/ PI);
+	Serial.print(">VESCimuYaw:");
+	Serial.println(UART.data.imuYaw*180/ PI);
+	Serial.print(">VESCimuAccX:");
+	Serial.println(UART.data.accX);
+	Serial.print(">VESCimuAccY:");
+	Serial.println(UART.data.accY);
+	Serial.print(">VESCimuAccZ:");
+	Serial.println(UART.data.accZ);
+	Serial.print(">VESCimuGyroX:");
+	Serial.println(UART.data.gyroX);
+	Serial.print(">VESCimuGyroY:");
+	Serial.println(UART.data.gyroY);
+	Serial.print(">VESCimuGyroZ:");
+	Serial.println(UART.data.gyroZ);
+	Serial.print(">VESCimuMagX:");
+	Serial.println(UART.data.magX);
+	Serial.print(">VESCimuMagY:");
+	Serial.println(UART.data.magY);
+	Serial.print(">VESCimuMagZ:");
+	Serial.println(UART.data.magZ);
+	Serial.print(">VESCimuQ0:");
+	Serial.println(UART.data.q0);
+	Serial.print(">VESCimuQ1:");
+	Serial.println(UART.data.q1);
+	Serial.print(">VESCimuQ2:");
+	Serial.println(UART.data.q2);
+	Serial.print(">VESCimuQ3:");
+	Serial.println(UART.data.q3);
   }
   else
   {
