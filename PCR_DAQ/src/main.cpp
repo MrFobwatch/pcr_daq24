@@ -10,13 +10,10 @@
 // #define zpin = A6;
 
 // LED declarations
-const int LED_pin = 7;
 #define DATA_PIN 3
 #define NUM_LEDS 10
 CRGB leds[NUM_LEDS];
 
-
-int ledState = LOW;
 
 // Motor/ESC Declarations
 const int poles = 16;
@@ -84,22 +81,18 @@ time_t getTeensy3Time()
   return Teensy3Clock.get();
 }
 
-void readData(File dataFile, int vescID){
+void printAllVESCData(File dataFile){
 
-		//Test UART connection
 
-	Serial.println("This the ");
+		Serial.println("This the ");
+		Serial.print(">VESCID:");
+		Serial.println(UART.data.id);
+		dataFile.println(UART.data.id);
 
-	if ( UART.getVescValues(vescID) ) {
-
-		// Serial.println(UART.data.rpm);
 		Serial.print(">VESCinpVolt:");
 		Serial.println(UART.data.inpVoltage);
 		dataFile.println(UART.data.inpVoltage);
 
-		Serial.print(">VESCID:");
-		Serial.println(UART.data.id);
-		dataFile.println(UART.data.id);
 
 		// Serial.println(UART.data.ampHours);
 		// Serial.print(">VESCOOdometer:");
@@ -107,17 +100,15 @@ void readData(File dataFile, int vescID){
 		// Serial.print(">VESCRPM:");
 		// Serial.println(UART.data.rpm);
 		// Serial.print(">VESCcalcRPM:");
-		// calcRPM = (UART.data.rpm) / (poles / 2);
+		calcRPM = (UART.data.rpm) / (poles / 2);
 		// Serial.println(calcRPM);
 		// Serial.print(">VESCTemp:");
 		// Serial.println(UART.data.tempMosfet);
 
-	}
-	if ( UART.getImuData(vescID) ) {
-
-		Serial.print(">VESCimuMask:");
-		Serial.println(UART.data.imuMask);
-		dataFile.println(UART.data.imuMask);
+	
+		// Serial.print(">VESCimuMask:");
+		// Serial.println(UART.data.imuMask);
+		// dataFile.println(UART.data.imuMask);
 
 		Serial.print(">VESCimuRoll:");
 		Serial.println(UART.data.imuRoll*180/ PI);
@@ -155,51 +146,39 @@ void readData(File dataFile, int vescID){
 		Serial.println(UART.data.gyroZ);
 		dataFile.println(UART.data.gyroZ);
 
-		Serial.print(">VESCimuMagX:");
-		Serial.println(UART.data.magX);
-		dataFile.println(UART.data.magX);
+		// Serial.print(">VESCimuMagX:");
+		// Serial.println(UART.data.magX);
+		// dataFile.println(UART.data.magX);
 
-		Serial.print(">VESCimuMagY:");
-		Serial.println(UART.data.magY);
-		dataFile.println(UART.data.magY);
+		// Serial.print(">VESCimuMagY:");
+		// Serial.println(UART.data.magY);
+		// dataFile.println(UART.data.magY);
 
-		Serial.print(">VESCimuMagZ:");
-		Serial.println(UART.data.magZ);
-		dataFile.println(UART.data.magZ);
+		// Serial.print(">VESCimuMagZ:");
+		// Serial.println(UART.data.magZ);
+		// dataFile.println(UART.data.magZ);
 
-		Serial.print(">VESCimuQ0:");
-		Serial.println(UART.data.q0);
-		dataFile.println(UART.data.q0);
+		// Serial.print(">VESCimuQ0:");
+		// Serial.println(UART.data.q0);
+		// dataFile.println(UART.data.q0);
 
-		Serial.print(">VESCimuQ1:");
-		Serial.println(UART.data.q1);
-		dataFile.println(UART.data.q1);
+		// Serial.print(">VESCimuQ1:");
+		// Serial.println(UART.data.q1);
+		// dataFile.println(UART.data.q1);
 
-		Serial.print(">VESCimuQ2:");
-		Serial.println(UART.data.q2);
-		dataFile.println(UART.data.q2);
+		// Serial.print(">VESCimuQ2:");
+		// Serial.println(UART.data.q2);
+		// dataFile.println(UART.data.q2);
 
-		Serial.print(">VESCimuQ3:");
-		Serial.println(UART.data.q3);
-		dataFile.println(UART.data.q3);
-
-	}
-	else
-	{
-		Serial.println("Failed to get data!");
-		dataFile.println("Failed to get data!");
-	}
-
-	dataFile.close();
+		// Serial.print(">VESCimuQ3:");
+		// Serial.println(UART.data.q3);
+		// dataFile.println(UART.data.q3);
 
 	}
 
 void setup() {
 	// Initialize the serial communications:
 	Serial.begin(115200);
-
-	// set the digital pin as output:
-	pinMode(LED_pin, OUTPUT);
 
 	//Enable the led
 	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
@@ -229,24 +208,34 @@ void setup() {
 }
 
 void loop() {
+	// Real Time Clock Values
+	uint64_t periods      = get_RTC_periods();
+    time_t seconds        = periods / 32768;
+    uint32_t milliseconds = (1000 * (periods & 0x7FFF)) / 32768;
+
+    char buf[80];
+    tm* timeinfo = localtime(&seconds);
+    strftime(buf, 80, "%F_%H:%M:%S", timeinfo);
+    // Serial.sprintf("%s.%03d\n", buf, milliseconds); // CHANGE THIS
 
 	// open data file
 	File dataFile = SD.open("data.txt", FILE_WRITE);
-	if(SD.exists("data.txt")){
-		Serial.println("Yippy! It exists!");
-	}
-	else{
-		Serial.println("NO! IT DOES NOT EXIST!");
-	}
+	// if(SD.exists("data.txt")){
+	// 	Serial.println("Yippy! It exists!");
+	// }
+	// else{
+	// 	Serial.println("NO! IT DOES NOT EXIST!");
+	// }
 
 	Serial.println("\nNew Data Set\n");
 	dataFile.println("\nNew Data Set\n");
+	dataFile.printf("%s.%03d\n", buf, milliseconds);
 
 	// print the sensor values:
 	// Serial.print(">xaxis:");
 	// Serial.println(analogRead(xpin));
 	// print a tab between values:
-	//  Serial.print("\n");
+	// Serial.print("\n");
 	// print the sensor values:
 	// Serial.print(">yaxis:");
 	// Serial.println(analogRead(ypin));
@@ -258,25 +247,9 @@ void loop() {
 	// print a tabe between values:
 	// Serial.print("\n");
 
-	weaponValueIn = analogRead(weaponCurrent);
-	weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
+	// weaponValueIn = analogRead(weaponCurrent);
+	// weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
 
-	if(weaponValueOut <= 512){
-		ledState = HIGH;
-	} else {
-		ledState = LOW;
-	}
-	digitalWrite(LED_pin, ledState);
-
-	// Add Real Time Clock Values
-	uint64_t periods      = get_RTC_periods();
-    time_t seconds        = periods / 32768;
-    uint32_t milliseconds = (1000 * (periods & 0x7FFF)) / 32768;
-
-    char buf[80];
-    tm* timeinfo = localtime(&seconds);
-    strftime(buf, 80, "%F_%H:%M:%S", timeinfo);
-    Serial.printf("%s.%03d\n", buf, milliseconds); // CHANGE THIS
 
 	if (Serial.available()) {
 		time_t t = processSyncMessage();
@@ -284,25 +257,31 @@ void loop() {
 			Teensy3Clock.set(t); // set the RTC
 			setTime(t);
 			}
-		}
-	// Poll the directly attached VESC for data
+	}
+	// Poll the directly attached VESC for data (Drive 1 VESC)
 	UART.getVescValues();
+	UART.getImuData();
+	printAllVESCData(dataFile);
 
+	// Poll the drive VESC for data (CAN ID of Drive 2 VESC)
+	UART.getVescValues(12);
+	UART.getImuData(12);
+	printAllVESCData(dataFile);
+
+	// Poll the Weapon VESC for data (CAN ID of Weapon 1 VESC)
+	UART.getVescValues(21);
+	UART.getImuData(21);
+	printAllVESCData(dataFile);
 	weaponRPM = UART.data.rpm;
-	weaponCurrent = UART.data.avgMotorCurrent;
-	weaponInputCurrent = UART.data.avgInputCurrent;
+	calcRPM = (UART.data.rpm) / (poles / 2);
+	// weaponCurrent = UART.data.avgMotorCurrent;
+	// weaponInputCurrent = UART.data.avgInputCurrent;
 
-	// Poll the drive VESC for data (CAN ID of Drive VESC)
-	UART.getVescValues(2); 
-	leftDriveRPM = UART.data.rpm;
-	leftDriveCurrent = UART.data.avgMotorCurrent;
-	leftDriveInputCurrent = UART.data.avgInputCurrent;
+	// Poll the Weapon VESC for data (CAN ID of Weapon 2 VESC)
+	UART.getVescValues(22);
+	UART.getImuData(22);
+	printAllVESCData(dataFile);
 
-	// Poll the other drive VESC
-	UART.getVescValues(3); 
-	rightDriveRPM = UART.data.rpm;
-	rightDriveCurrent = UART.data.avgMotorCurrent;
-	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
 	FastLED.setBrightness(50);
 
@@ -317,11 +296,7 @@ if ( calcRPM >= 400) {
 		leds[2] = CRGB::Red;
 		FastLED.show();
 	}
-
-	readData(dataFile, 11);
-	readData(dataFile, 12);
-	readData(dataFile, 21);
-	readData(dataFile, 22);
+	dataFile.close();
 
 	// delay before next reading:
 	delay(100);
