@@ -26,10 +26,10 @@ const int poles = 16;
 int weaponValueIn = 0;
 int weaponValueOut = 0;
 
-long weaponElecRPM = 0;
+long weaponRPM = 0;
 float weaponCurrent = 0;
 float weaponInputCurrent = 0;
-int weaponCalcRPM;
+int calcRPM;
 
 // Drivetrain Variables
 
@@ -92,11 +92,19 @@ void setup() {
 	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
 
 	//Enable Serial on a port for UART
-	Serial1.begin(115200);
+	Serial5.begin(115200);
 
 	// Set the port for the UART communication to the VESC
-	UART.setSerialPort(&Serial1);
-	// UART.setDebugPort(&Serial);
+	UART.setSerialPort(&Serial5);
+	//UART.setDebugPort(&Serial);
+
+	Serial.print("Initializing SD card...");
+
+  	if (!SD.begin(chipSelect)) {
+    	Serial.println("initialization failed!");
+    	return;
+  	}
+  	Serial.println("initialization done.");
 
 	//Initialize the RTC Sync
 	setSyncProvider(getTeensy3Time);   // the function to get the time from the RTC
@@ -110,8 +118,43 @@ void setup() {
 
 void loop() {
 
-	// open the file named datalog.txt on the sd card
-	File dataFile = SD.open("datalog.txt", FILE_WRITE);
+	// open data file
+	File dataFile = SD.open("data.txt", FILE_WRITE);
+	if(SD.exists("data.txt")){
+		Serial.println("Yippy! It exists!");
+	}
+	else{
+		Serial.println("NO! IT DOES NOT EXIST!");
+	}
+
+	Serial.println("\nNew Data Set\n");
+	dataFile.println("\nNew Data Set\n");
+
+	// print the sensor values:
+	// Serial.print(">xaxis:");
+	// Serial.println(analogRead(xpin));
+	// print a tab between values:
+	//  Serial.print("\n");
+	// print the sensor values:
+	// Serial.print(">yaxis:");
+	// Serial.println(analogRead(ypin));
+	// print a tab between values:
+	// Serial.print("\n");
+	// print the sensor values:
+	// Serial.print(">zaxis:");
+	// Serial.println(analogRead(zpin));
+	// print a tabe between values:
+	// Serial.print("\n");
+
+	weaponValueIn = analogRead(weaponCurrent);
+	weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
+
+	if(weaponValueOut <= 512){
+		ledState = HIGH;
+	} else {
+		ledState = LOW;
+	}
+	digitalWrite(LED_pin, ledState);
 
 	// Add Real Time Clock Values
 	uint64_t periods      = get_RTC_periods();
@@ -133,10 +176,7 @@ void loop() {
 	// Poll the directly attached VESC for data
 	UART.getVescValues();
 
-	weaponElecRPM = UART.data.rpm;
-	weaponCalcRPM = (UART.data.rpm) / (poles / 2);
-	Serial.print(">VESCcalcRPM:");
-	Serial.println(weaponCalcRPM);
+	weaponRPM = UART.data.rpm;
 	weaponCurrent = UART.data.avgMotorCurrent;
 	weaponInputCurrent = UART.data.avgInputCurrent;
 
@@ -152,10 +192,9 @@ void loop() {
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
 
-	// LED Code First Version
 	FastLED.setBrightness(50);
 
-if ( weaponCalcRPM >= 400) {
+if ( calcRPM >= 400) {
 		leds[0] = CRGB::Green;
 		leds[1] = CRGB::Green;
 		leds[2] = CRGB::Green;
@@ -166,35 +205,112 @@ if ( weaponCalcRPM >= 400) {
 		leds[2] = CRGB::Red;
 		FastLED.show();
 	}
+	//Test UART connection
 
+if ( UART.getVescValues() ) {
+
+    // Serial.println(UART.data.rpm);
+	Serial.print(">VESCinpVolt:");
+	Serial.println(UART.data.inpVoltage);
+	dataFile.println(UART.data.inpVoltage);
+
+	Serial.print(">VESCID:");
+	Serial.println(UART.data.id);
+	dataFile.println(UART.data.id);
+
+    // Serial.println(UART.data.ampHours);
+	// Serial.print(">VESCOOdometer:");
+    // Serial.println(UART.data.tachometer);
+	// Serial.print(">VESCRPM:");
+    // Serial.println(UART.data.rpm);
+	// Serial.print(">VESCcalcRPM:");
+	// calcRPM = (UART.data.rpm) / (poles / 2);
+	// Serial.println(calcRPM);
+	// Serial.print(">VESCTemp:");
+	// Serial.println(UART.data.tempMosfet);
+
+  }
   if ( UART.getImuData() ) {
+
+    Serial.print(">VESCimuMask:");
+	Serial.println(UART.data.imuMask);
+	dataFile.println(UART.data.imuMask);
 
 	Serial.print(">VESCimuRoll:");
 	Serial.println(UART.data.imuRoll*180/ PI);
+	dataFile.println(UART.data.imuRoll*180/ PI);
+
 	Serial.print(">VESCimuPitch:");
 	Serial.println(UART.data.imuPitch*180/ PI);
+	dataFile.println(UART.data.imuPitch*180/ PI);
+
 	Serial.print(">VESCimuYaw:");
 	Serial.println(UART.data.imuYaw*180/ PI);
+	dataFile.println(UART.data.imuYaw*180/ PI);
+
 	Serial.print(">VESCimuAccX:");
 	Serial.println(UART.data.accX);
+	dataFile.println(UART.data.accX);
+
 	Serial.print(">VESCimuAccY:");
 	Serial.println(UART.data.accY);
+	dataFile.println(UART.data.accY);
+
 	Serial.print(">VESCimuAccZ:");
 	Serial.println(UART.data.accZ);
-	// Serial.print(">VESCimuGyroX:");
-	// Serial.println(UART.data.gyroX);
-	// Serial.print(">VESCimuGyroY:");
-	// Serial.println(UART.data.gyroY);
-	// Serial.print(">VESCimuGyroZ:");
-	// Serial.println(UART.data.gyroZ);
-\
+	dataFile.println(UART.data.accZ);
+
+	Serial.print(">VESCimuGyroX:");
+	Serial.println(UART.data.gyroX);
+	dataFile.println(UART.data.gyroX);
+
+	Serial.print(">VESCimuGyroY:");
+	Serial.println(UART.data.gyroY);
+	dataFile.println(UART.data.gyroY);
+
+	Serial.print(">VESCimuGyroZ:");
+	Serial.println(UART.data.gyroZ);
+	dataFile.println(UART.data.gyroZ);
+
+	Serial.print(">VESCimuMagX:");
+	Serial.println(UART.data.magX);
+	dataFile.println(UART.data.magX);
+
+	Serial.print(">VESCimuMagY:");
+	Serial.println(UART.data.magY);
+	dataFile.println(UART.data.magY);
+
+	Serial.print(">VESCimuMagZ:");
+	Serial.println(UART.data.magZ);
+	dataFile.println(UART.data.magZ);
+
+	Serial.print(">VESCimuQ0:");
+	Serial.println(UART.data.q0);
+	dataFile.println(UART.data.q0);
+
+	Serial.print(">VESCimuQ1:");
+	Serial.println(UART.data.q1);
+	dataFile.println(UART.data.q1);
+
+	Serial.print(">VESCimuQ2:");
+	Serial.println(UART.data.q2);
+	dataFile.println(UART.data.q2);
+
+	Serial.print(">VESCimuQ3:");
+	Serial.println(UART.data.q3);
+	dataFile.println(UART.data.q3);
+
   }
   else
   {
     Serial.println("Failed to get data!");
+	dataFile.println("Failed to get data!");
   }
+
+dataFile.close();
+
 	// delay before next reading:
-	// delay(10);
+	delay(100);
 
 
 	//LED Testing
@@ -210,5 +326,7 @@ if ( weaponCalcRPM >= 400) {
  
     //   // Turn our current led back to black for the next loop around
     //   leds[whiteLed] = CRGB::Black;
+
+	
 
 }
