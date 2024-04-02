@@ -2,6 +2,7 @@
 #include <SD.h>
 #include <VescUart.h>
 #include <FastLED.h>
+#include <TimeLib.h>
 
 // Accelerometer declarations
 // #define xpin = A4;
@@ -43,6 +44,43 @@ VescUart UART;
 
 const int chipSelect = BUILTIN_SDCARD;
 
+// RTC Period Read Fucntion
+uint64_t get_RTC_periods()
+{
+    uint32_t hi1 = SNVS_HPRTCMR, lo1 = SNVS_HPRTCLR;   
+    while (true)
+    {
+        uint32_t hi2 = SNVS_HPRTCMR, lo2 = SNVS_HPRTCLR; 
+        if (lo1 == lo2 && hi1 == hi2)
+        {
+            return (uint64_t)hi2 << 32 | lo2;
+        }
+        hi1 = hi2;
+        lo1 = lo2;
+    }
+}
+
+#define TIME_HEADER  "T"   // Header tag for serial time sync message
+
+unsigned long processSyncMessage() {
+  unsigned long pctime = 0L;
+  const unsigned long DEFAULT_TIME = 1357041600; // Jan 1 2013 
+
+  if(Serial.find(TIME_HEADER)) {
+     pctime = Serial.parseInt();
+     return pctime;
+     if( pctime < DEFAULT_TIME) { // check the value is a valid time (greater than Jan 1 2013)
+       pctime = 0L; // return 0 to indicate that the time is not valid
+     }
+  }
+  return pctime;
+}
+
+time_t getTeensy3Time()
+{
+  return Teensy3Clock.get();
+}
+
 void setup() {
 	// Initialize the serial communications:
 	Serial.begin(115200);
@@ -58,14 +96,40 @@ void setup() {
 
 	// Set the port for the UART communication to the VESC
 	UART.setSerialPort(&Serial1);
-	UART.setDebugPort(&Serial);
+	// UART.setDebugPort(&Serial);
+
+	//Initialize the RTC Sync
+	setSyncProvider(getTeensy3Time);   // the function to get the time from the RTC
+  	if (timeStatus() != timeSet) 
+		Serial.println("Unable to sync with the RTC");
+	else
+		Serial.println("RTC has set the system time");      
+
 }
+
 
 void loop() {
 
 	// open the file named datalog.txt on the sd card
 	File dataFile = SD.open("datalog.txt", FILE_WRITE);
 
+	// Add Real Time Clock Values
+	uint64_t periods      = get_RTC_periods();
+    time_t seconds        = periods / 32768;
+    uint32_t milliseconds = (1000 * (periods & 0x7FFF)) / 32768;
+
+    char buf[80];
+    tm* timeinfo = localtime(&seconds);
+    strftime(buf, 80, "%F_%H:%M:%S", timeinfo);
+    Serial.printf("%s.%03d\n", buf, milliseconds); // CHANGE THIS
+
+	if (Serial.available()) {
+		time_t t = processSyncMessage();
+		if (t != 0) {
+			Teensy3Clock.set(t); // set the RTC
+			setTime(t);
+			}
+		}
 	// Poll the directly attached VESC for data
 	UART.getVescValues();
 
