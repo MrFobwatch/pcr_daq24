@@ -41,6 +41,9 @@ float rightDriveCurrent, rightDriveInputCurrent;
 
 // VescUart Class
 VescUart UART;
+// Local connection is to ID 11 (Drive VESC)
+// Second Drive is on ID 12
+// Weapon is on ID 21 and 22
 
 const int chipSelect = BUILTIN_SDCARD;
 
@@ -164,7 +167,8 @@ void loop() {
     char buf[80];
     tm* timeinfo = localtime(&seconds);
     strftime(buf, 80, "%F_%H:%M:%S", timeinfo);
-    Serial.printf("%s.%03d\n", buf, milliseconds); // CHANGE THIS
+    // Serial.printf("%s.%03d\n", buf, milliseconds); // CHANGE THIS
+	dataFile.printf("%s.%03d\n", buf, milliseconds);
 
 	if (Serial.available()) {
 		time_t t = processSyncMessage();
@@ -173,7 +177,7 @@ void loop() {
 			setTime(t);
 			}
 		}
-	// Poll the directly attached VESC for data
+	// Poll the directly attached VESC for data (ID 11) Drive VESC
 	UART.getVescValues();
 
 	weaponRPM = UART.data.rpm;
@@ -181,13 +185,13 @@ void loop() {
 	weaponInputCurrent = UART.data.avgInputCurrent;
 
 	// Poll the drive VESC for data (CAN ID of Drive VESC)
-	UART.getVescValues(2); 
+	UART.getVescValues(12); 
 	leftDriveRPM = UART.data.rpm;
 	leftDriveCurrent = UART.data.avgMotorCurrent;
 	leftDriveInputCurrent = UART.data.avgInputCurrent;
 
 	// Poll the other drive VESC
-	UART.getVescValues(3); 
+	UART.getVescValues(21); 
 	rightDriveRPM = UART.data.rpm;
 	rightDriveCurrent = UART.data.avgMotorCurrent;
 	rightDriveInputCurrent = UART.data.avgInputCurrent;
