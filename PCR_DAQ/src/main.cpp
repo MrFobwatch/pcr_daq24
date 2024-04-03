@@ -10,7 +10,7 @@
 // #define zpin = A6;
 
 // LED declarations
-#define DATA_PIN 3
+#define DATA_PIN 33
 #define NUM_LEDS 10
 CRGB leds[NUM_LEDS];
 
