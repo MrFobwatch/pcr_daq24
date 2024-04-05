@@ -83,98 +83,102 @@ time_t getTeensy3Time()
 
 void printAllVESCData(File dataFile){
 
-
+	
 		Serial.println("This the ");
-		Serial.print(">VESCID:");
-		Serial.println(UART.data.id);
-		dataFile.println(UART.data.id);
+	Serial.print(">VESCID:");
+	Serial.println(UART.data.id);
+	dataFile.println(UART.data.id);
 
-		Serial.print(">VESCinpVolt:");
-		Serial.println(UART.data.inpVoltage);
-		dataFile.println(UART.data.inpVoltage);
+	Serial.print(">VESCinpVolt:");
+	Serial.println(UART.data.inpVoltage);
+	dataFile.println(UART.data.inpVoltage);
 
+	Serial.print(">VESCavgMotorCurrent");
+	Serial.println(UART.data.avgMotorCurrent);
+	dataFile.println(UART.data.avgMotorCurrent);
 
-		// Serial.println(UART.data.ampHours);
-		// Serial.print(">VESCOOdometer:");
-		// Serial.println(UART.data.tachometer);
-		// Serial.print(">VESCRPM:");
-		// Serial.println(UART.data.rpm);
-		// Serial.print(">VESCcalcRPM:");
-		calcRPM = (UART.data.rpm) / (poles / 2);
-		// Serial.println(calcRPM);
-		// Serial.print(">VESCTemp:");
-		// Serial.println(UART.data.tempMosfet);
+	// Serial.println(UART.data.ampHours);
+	// Serial.print(">VESCOOdometer:");
+	// Serial.println(UART.data.tachometer);
+	// Serial.print(">VESCRPM:");
+	// Serial.println(UART.data.rpm);
+	// Serial.print(">VESCcalcRPM:");
+	calcRPM = (UART.data.rpm) / (poles / 2);
+	Serial.println(calcRPM);
+	dataFile.println(calcRPM);
+	// Serial.print(">VESCTemp:");
+	// Serial.println(UART.data.tempMosfet);
 
 	
-		// Serial.print(">VESCimuMask:");
-		// Serial.println(UART.data.imuMask);
-		// dataFile.println(UART.data.imuMask);
+	// Serial.print(">VESCimuMask:");
+	// Serial.println(UART.data.imuMask);
+	// dataFile.println(UART.data.imuMask);
 
-		Serial.print(">VESCimuRoll:");
-		Serial.println(UART.data.imuRoll*180/ PI);
-		dataFile.println(UART.data.imuRoll*180/ PI);
+	Serial.print(">VESCimuRoll:");
+	Serial.println(UART.data.imuRoll*180/ PI);
+	dataFile.println(UART.data.imuRoll*180/ PI);
 
-		Serial.print(">VESCimuPitch:");
-		Serial.println(UART.data.imuPitch*180/ PI);
-		dataFile.println(UART.data.imuPitch*180/ PI);
+	Serial.print(">VESCimuPitch:");
+	Serial.println(UART.data.imuPitch*180/ PI);
+	dataFile.println(UART.data.imuPitch*180/ PI);
 
-		Serial.print(">VESCimuYaw:");
-		Serial.println(UART.data.imuYaw*180/ PI);
-		dataFile.println(UART.data.imuYaw*180/ PI);
+	Serial.print(">VESCimuYaw:");
+	Serial.println(UART.data.imuYaw*180/ PI);
+	dataFile.println(UART.data.imuYaw*180/ PI);
 
-		Serial.print(">VESCimuAccX:");
-		Serial.println(UART.data.accX);
-		dataFile.println(UART.data.accX);
+	Serial.print(">VESCimuAccX:");
+	Serial.println(UART.data.accX);
+	dataFile.println(UART.data.accX);
 
-		Serial.print(">VESCimuAccY:");
-		Serial.println(UART.data.accY);
-		dataFile.println(UART.data.accY);
+	Serial.print(">VESCimuAccY:");
+	Serial.println(UART.data.accY);
+	dataFile.println(UART.data.accY);
 
-		Serial.print(">VESCimuAccZ:");
-		Serial.println(UART.data.accZ);
-		dataFile.println(UART.data.accZ);
+	Serial.print(">VESCimuAccZ:");
+	Serial.println(UART.data.accZ);
+	dataFile.println(UART.data.accZ);
 
-		Serial.print(">VESCimuGyroX:");
-		Serial.println(UART.data.gyroX);
-		dataFile.println(UART.data.gyroX);
+	Serial.print(">VESCimuGyroX:");
+	Serial.println(UART.data.gyroX);
+	dataFile.println(UART.data.gyroX);
 
-		Serial.print(">VESCimuGyroY:");
-		Serial.println(UART.data.gyroY);
-		dataFile.println(UART.data.gyroY);
+	Serial.print(">VESCimuGyroY:");
+	Serial.println(UART.data.gyroY);
+	dataFile.println(UART.data.gyroY);
 
-		Serial.print(">VESCimuGyroZ:");
-		Serial.println(UART.data.gyroZ);
-		dataFile.println(UART.data.gyroZ);
+	Serial.print(">VESCimuGyroZ:");
+	Serial.println(UART.data.gyroZ);
+	dataFile.println(UART.data.gyroZ);
 
-		// Serial.print(">VESCimuMagX:");
-		// Serial.println(UART.data.magX);
-		// dataFile.println(UART.data.magX);
+	// Serial.print(">VESCimuMagX:");
+	// Serial.println(UART.data.magX);
+	// dataFile.println(UART.data.magX);
 
-		// Serial.print(">VESCimuMagY:");
-		// Serial.println(UART.data.magY);
-		// dataFile.println(UART.data.magY);
+	// Serial.print(">VESCimuMagY:");
+	// Serial.println(UART.data.magY);
+	// dataFile.println(UART.data.magY);
 
-		// Serial.print(">VESCimuMagZ:");
-		// Serial.println(UART.data.magZ);
-		// dataFile.println(UART.data.magZ);
+	// Serial.print(">VESCimuMagZ:");
+	// Serial.println(UART.data.magZ);
+	// dataFile.println(UART.data.magZ);
 
-		// Serial.print(">VESCimuQ0:");
-		// Serial.println(UART.data.q0);
-		// dataFile.println(UART.data.q0);
+	// Serial.print(">VESCimuQ0:");
+	// Serial.println(UART.data.q0);
+	// dataFile.println(UART.data.q0);
 
-		// Serial.print(">VESCimuQ1:");
-		// Serial.println(UART.data.q1);
-		// dataFile.println(UART.data.q1);
+	// Serial.print(">VESCimuQ1:");
+	// Serial.println(UART.data.q1);
+	// dataFile.println(UART.data.q1);
 
-		// Serial.print(">VESCimuQ2:");
-		// Serial.println(UART.data.q2);
-		// dataFile.println(UART.data.q2);
+	// Serial.print(">VESCimuQ2:");
+	// Serial.println(UART.data.q2);
+	// dataFile.println(UART.data.q2);
 
-		// Serial.print(">VESCimuQ3:");
-		// Serial.println(UART.data.q3);
-		// dataFile.println(UART.data.q3);
+	// Serial.print(">VESCimuQ3:");
+	// Serial.println(UART.data.q3);
+	// dataFile.println(UART.data.q3);
 
-	}
+}
 
 void setup() {
 	// Initialize the serial communications:
@@ -227,8 +231,8 @@ void loop() {
 	// 	Serial.println("NO! IT DOES NOT EXIST!");
 	// }
 
-	Serial.println("\nNew Data Set\n");
-	dataFile.println("\nNew Data Set\n");
+	// Serial.println("New Data Set");
+	// dataFile.println("New Data Set");
 	dataFile.printf("%s.%03d\n", buf, milliseconds);
 
 	// print the sensor values:
@@ -316,6 +320,6 @@ if ( calcRPM >= 400) {
     //   // Turn our current led back to black for the next loop around
     //   leds[whiteLed] = CRGB::Black;
 
-	
+
 
 }
