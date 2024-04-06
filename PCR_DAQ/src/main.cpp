@@ -4,16 +4,10 @@
 #include <FastLED.h>
 #include <TimeLib.h>
 
-// Accelerometer declarations
-// #define xpin = A4;
-// #define ypin = A5;
-// #define zpin = A6;
-
 // LED declarations
 #define DATA_PIN 33
 #define NUM_LEDS 10
 CRGB leds[NUM_LEDS];
-
 
 // Motor/ESC Declarations
 const int poles = 16;
@@ -29,7 +23,6 @@ float weaponInputCurrent = 0;
 int calcRPM;
 
 // Drivetrain Variables
-
 long leftDriveRPM;
 float leftDriveCurrent, leftDriveInputCurrent;
 
@@ -83,8 +76,6 @@ time_t getTeensy3Time()
 
 void printAllVESCData(File dataFile){
 
-	
-		Serial.println("This the ");
 	Serial.print(">VESCID:");
 	Serial.println(UART.data.id);
 	dataFile.println(UART.data.id);
@@ -97,22 +88,11 @@ void printAllVESCData(File dataFile){
 	Serial.println(UART.data.avgMotorCurrent);
 	dataFile.println(UART.data.avgMotorCurrent);
 
-	// Serial.println(UART.data.ampHours);
-	// Serial.print(">VESCOOdometer:");
-	// Serial.println(UART.data.tachometer);
-	// Serial.print(">VESCRPM:");
-	// Serial.println(UART.data.rpm);
-	// Serial.print(">VESCcalcRPM:");
 	calcRPM = (UART.data.rpm) / (poles / 2);
+
+	Serial.print(">VESCRPM");
 	Serial.println(calcRPM);
 	dataFile.println(calcRPM);
-	// Serial.print(">VESCTemp:");
-	// Serial.println(UART.data.tempMosfet);
-
-	
-	// Serial.print(">VESCimuMask:");
-	// Serial.println(UART.data.imuMask);
-	// dataFile.println(UART.data.imuMask);
 
 	Serial.print(">VESCimuRoll:");
 	Serial.println(UART.data.imuRoll*180/ PI);
@@ -149,34 +129,6 @@ void printAllVESCData(File dataFile){
 	Serial.print(">VESCimuGyroZ:");
 	Serial.println(UART.data.gyroZ);
 	dataFile.println(UART.data.gyroZ);
-
-	// Serial.print(">VESCimuMagX:");
-	// Serial.println(UART.data.magX);
-	// dataFile.println(UART.data.magX);
-
-	// Serial.print(">VESCimuMagY:");
-	// Serial.println(UART.data.magY);
-	// dataFile.println(UART.data.magY);
-
-	// Serial.print(">VESCimuMagZ:");
-	// Serial.println(UART.data.magZ);
-	// dataFile.println(UART.data.magZ);
-
-	// Serial.print(">VESCimuQ0:");
-	// Serial.println(UART.data.q0);
-	// dataFile.println(UART.data.q0);
-
-	// Serial.print(">VESCimuQ1:");
-	// Serial.println(UART.data.q1);
-	// dataFile.println(UART.data.q1);
-
-	// Serial.print(">VESCimuQ2:");
-	// Serial.println(UART.data.q2);
-	// dataFile.println(UART.data.q2);
-
-	// Serial.print(">VESCimuQ3:");
-	// Serial.println(UART.data.q3);
-	// dataFile.println(UART.data.q3);
 
 }
 
@@ -224,36 +176,10 @@ void loop() {
 
 	// open data file
 	File dataFile = SD.open("data.txt", FILE_WRITE);
-	// if(SD.exists("data.txt")){
-	// 	Serial.println("Yippy! It exists!");
-	// }
-	// else{
-	// 	Serial.println("NO! IT DOES NOT EXIST!");
-	// }
-
-	// Serial.println("New Data Set");
-	// dataFile.println("New Data Set");
+	
 	dataFile.printf("%s.%03d\n", buf, milliseconds);
 
-	// print the sensor values:
-	// Serial.print(">xaxis:");
-	// Serial.println(analogRead(xpin));
-	// print a tab between values:
-	// Serial.print("\n");
-	// print the sensor values:
-	// Serial.print(">yaxis:");
-	// Serial.println(analogRead(ypin));
-	// print a tab between values:
-	// Serial.print("\n");
-	// print the sensor values:
-	// Serial.print(">zaxis:");
-	// Serial.println(analogRead(zpin));
-	// print a tabe between values:
-	// Serial.print("\n");
-
-	// weaponValueIn = analogRead(weaponCurrent);
-	// weaponValueOut = map(weaponValueIn, 0, 1023, 0, 255);
-
+	dataFile.println(seconds);
 
 	if (Serial.available()) {
 		time_t t = processSyncMessage();
@@ -278,14 +204,11 @@ void loop() {
 	printAllVESCData(dataFile);
 	weaponRPM = UART.data.rpm;
 	calcRPM = (UART.data.rpm) / (poles / 2);
-	// weaponCurrent = UART.data.avgMotorCurrent;
-	// weaponInputCurrent = UART.data.avgInputCurrent;
 
 	// Poll the Weapon VESC for data (CAN ID of Weapon 2 VESC)
 	UART.getVescValues(22);
 	UART.getImuData(22);
 	printAllVESCData(dataFile);
-
 
 	FastLED.setBrightness(50);
 
@@ -305,7 +228,6 @@ if ( calcRPM >= 400) {
 	// delay before next reading:
 	delay(100);
 
-
 	//LED Testing
 	//    for(int whiteLed = 0; whiteLed < NUM_LEDS; whiteLed = whiteLed + 1) {
     //   // Turn our current led on to white, then show the leds
@@ -319,7 +241,5 @@ if ( calcRPM >= 400) {
  
     //   // Turn our current led back to black for the next loop around
     //   leds[whiteLed] = CRGB::Black;
-
-
 
 }
