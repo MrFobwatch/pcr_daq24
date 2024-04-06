@@ -21,6 +21,7 @@ long weaponRPM = 0;
 float weaponCurrent = 0;
 float weaponInputCurrent = 0;
 int calcRPM;
+int calcWeaponRPM;
 
 // Drivetrain Variables
 long leftDriveRPM;
@@ -203,7 +204,7 @@ void loop() {
 	UART.getImuData(21);
 	printAllVESCData(dataFile);
 	weaponRPM = UART.data.rpm;
-	calcRPM = (UART.data.rpm) / (poles / 2);
+	calcWeaponRPM = (UART.data.rpm) / (poles / 2);
 
 	// Poll the Weapon VESC for data (CAN ID of Weapon 2 VESC)
 	UART.getVescValues(22);
@@ -212,7 +213,7 @@ void loop() {
 
 	FastLED.setBrightness(50);
 
-if ( calcRPM >= 400) {
+if ( calcWeaponRPM >= 1200) {
 		leds[0] = CRGB::Green;
 		leds[1] = CRGB::Green;
 		leds[2] = CRGB::Green;
