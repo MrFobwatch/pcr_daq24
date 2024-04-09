@@ -133,6 +133,38 @@ void printAllVESCData(File dataFile){
 
 }
 
+void initialize(void){
+
+	// Initialize the serial communications:
+	Serial.begin(115200);
+
+	//Enable the led
+	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
+
+	//Enable Serial on a port for UART
+	Serial5.begin(115200);
+
+	// Set the port for the UART communication to the VESC
+	UART.setSerialPort(&Serial5);
+	//UART.setDebugPort(&Serial);
+
+	Serial.print("Initializing SD card...");
+
+  	if (!SD.begin(chipSelect)) {
+    	Serial.println("initialization failed!");
+    	return;
+  	}
+  	Serial.println("initialization done.");
+
+	//Initialize the RTC Sync
+	setSyncProvider(getTeensy3Time);   // the function to get the time from the RTC
+  	if (timeStatus() != timeSet) 
+		Serial.println("Unable to sync with the RTC");
+	else
+		Serial.println("RTC has set the system time");
+
+}
+
 void setup() {
 	// Initialize the serial communications:
 	Serial.begin(115200);
@@ -165,6 +197,11 @@ void setup() {
 }
 
 void loop() {
+
+	if(!Serial5){
+		initialize();
+	}
+
 	// Real Time Clock Values
 	uint64_t periods      = get_RTC_periods();
     time_t seconds        = periods / 32768;
