@@ -136,10 +136,10 @@ void printAllVESCData(File dataFile){
 void initialize(void){
 
 	// Initialize the serial communications:
-	Serial.begin(115200);
+	// Serial.begin(115200);
 
 	//Enable the led
-	FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
+	// FastLED.addLeds<WS2811, DATA_PIN, RGB>(leds, NUM_LEDS);
 
 	//Enable Serial on a port for UART
 	Serial5.begin(115200);
@@ -248,9 +248,9 @@ void loop() {
 	UART.getImuData(22);
 	printAllVESCData(dataFile);
 
-	FastLED.setBrightness(50);
+	FastLED.setBrightness(100);
 
-if ( calcWeaponRPM >= 1200) {
+if ( calcWeaponRPM >= 2000) {
 		leds[0] = CRGB::Green;
 		leds[1] = CRGB::Green;
 		leds[2] = CRGB::Green;
